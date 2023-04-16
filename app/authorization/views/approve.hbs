@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+	<title>OAuth in Action: OAuth Authorization Server</title>
+
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<style>
+		body {
+			padding-top: 60px;
+		}
+
+		.navbar-inverse {
+			background-color: #322;
+		}
+	</style>
+</head>
+
+<body>
+
+	<nav class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="/">OAuth in Action: <span class="label label-danger">OAuth Authorization
+						Server</span></a>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container">
+
+		<div class="jumbotron">
+			<h2>Approve this client?</h2>
+			{{!-- {{#if client.client_name }}
+			<p><b>Name:</b> <code>{{ client.client_name }}</code></p>
+			{{/if }} --}}
+			<p><b>ID:</b> <code>{{ client.client_id }}</code></p>
+			{{!-- {{#if client.redirect_uri }}
+			<p><b>URI:</b> <code>{{ client.redirect_uri }}</code></p>
+			{{/if }} --}}
+
+			<form class="form" action="/authorize" method="POST">
+				<input type="hidden" name="reqid" value="{{ reqid }}">
+				<select name="user">
+					{{#each user}}
+					<option value="{{ this/sub }}">{{ this/name }}</option>
+					{{/each }}
+				</select>
+				{{#if scope }}
+				<p>The client is requesting access to the following:</p>
+				<ul>
+					{{#each scope}}
+					<li><input type="checkbox" name="scope[]" id="scope_{{ this }}" checked="checked"
+							value="{{ this }}"> <label for="scope_{{ this }}">{{ this }}</label></li>
+					{{/each }}
+				</ul>
+				{{/if }}
+				<input type="submit" class="btn btn-success" name="approve" value="Approve">
+				<input type="submit" class="btn btn-danger" name="deny" value="Deny">
+			</form>
+		</div>
+
+	</div><!-- /.container -->
+
+</body>
+
+</html>
