@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+# アプリケーション
+  app:
+    container_name: app
+    build: .
+    tty: true
+    ports:
+      # クライアント用のport
+      - "3000:3000"
+      # 認可サーバー用のport
+      - "3001:3001"
+      # リソースサーバー用のport
+      - "3002:3002"
+      # Prisma Studio用のport
+      - "5555:5555"
+    volumes:
+      - type: bind
+        source: .
+        target: /workspaces
+    env_file:
+      - .env
+
+# データベース
+  db:
+    image: postgres
+    container_name: my_postgres
+    ports:
+     - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - ./db:/var/lib/postgresql/data
