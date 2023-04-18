@@ -39,7 +39,7 @@ export class TokenController {
             }
 
             if (authorizeData.client_id === clientId) {
-                const tokenResponse = await this.tokenService.createToken(clientAuthDto, authorizeData.user);
+                const tokenResponse = await this.tokenService.createToken(clientAuthDto, authorizeData.user, authorizeData.client_id);
 
                 return res.status(200).json(tokenResponse);
             } else {
@@ -53,7 +53,7 @@ export class TokenController {
                 return res.status(400).json({ error: 'invalid_grant' })
             }
             clientAuthDto.scope = authorizeData.scope.join(' ')
-            const tokenResponse = await this.tokenService.createToken(clientAuthDto, authorizeData.user);
+            const tokenResponse = await this.tokenService.createToken(clientAuthDto, authorizeData.user, authorizeData.client_id);
 
             return res.status(200).json(tokenResponse);
         }

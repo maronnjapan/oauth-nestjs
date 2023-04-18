@@ -46,7 +46,7 @@
 
 			<form class="form" action="/authorize" method="POST">
 				<input type="hidden" name="reqid" value="{{ reqid }}">
-				<select name="user">
+				<select name="userId">
 					{{#each user}}
 					<option value="{{ this/sub }}">{{ this/name }}</option>
 					{{/each }}

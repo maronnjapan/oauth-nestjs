@@ -16,7 +16,7 @@ export class AuthorizeController {
             client_id: process.env.CLIENT_ID,
             redirect_uri: Config.getRedirectUris()[0],
             state,
-            scope: 'profile email address phone openid'
+            scope: 'read'
         })
         return res.redirect(authorizeUrl);
 

@@ -9,7 +9,7 @@ import { User } from '@prisma/client';
 @Injectable()
 export class TokenService {
     getPublicKey() {
-        const openPem = jsrsasignUtil.readFile('/workspaces/app/authorization/public-key.pem')
+        const openPem = jsrsasignUtil.readFile(__dirname.replace(/dist[\S]*/g, '') + 'public-key.pem')
         return openPem
     }
     getClientInfo(formData: ClientAuthDto, authHeader: string) {
@@ -31,7 +31,7 @@ export class TokenService {
         return { clientId: undefined, clientSecret: undefined }
     }
 
-    async createToken(clientAuthDto: ClientAuthDto, userData: User) {
+    async createToken(clientAuthDto: ClientAuthDto, userData: User, clientId: string) {
         const jti = Math.random().toString(36).slice(-10);
         const header = {
             typ: 'JWT',
@@ -52,14 +52,14 @@ export class TokenService {
                 access_token: jti,
             }
         })
-        const pem = jsrsasignUtil.readFile('/workspaces/app/authorization/private-key.pem')
+        const pem = jsrsasignUtil.readFile(__dirname.replace(/dist[\S]*/g, '') + 'private-key.pem')
         const privateKey = jsrsasign.KEYUTIL.getKey(pem) as jsrsasign.RSAKey;
         const accessToken = jsrsasign.KJUR.jws.JWS.sign(header.alg, JSON.stringify(header), JSON.stringify(payload), privateKey)
 
         const refreshToken = Math.random().toString(36).slice(-12);
         await prismaServie.refreshToken.create({
             data: {
-                client_id: clientAuthDto.client_id,
+                client_id: clientId,
                 refresh_token: refreshToken,
                 scope: clientAuthDto.scope.split(' '),
                 user: {

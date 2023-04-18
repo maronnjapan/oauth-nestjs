@@ -8,7 +8,7 @@ import * as jsrsasignUtil from 'jsrsasign-util';
 export class AuthGuard implements CanActivate {
   async canActivate(
     context: ExecutionContext,
-  ): Promise<boolean>  {
+  ): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
     const authHeader = request.headers.authorization;
     if (!authHeader) {
@@ -16,15 +16,15 @@ export class AuthGuard implements CanActivate {
     }
     const accessToken = authHeader.slice('bearer '.length);
     const axiosResponse = await axios.get('http://localhost:3001/token/public-key');
-    const publicKey= jsrsasign.KEYUTIL.getKey(axiosResponse.data) as jsrsasign.RSAKey
-    if(!jsrsasign.KJUR.jws.JWS.verify(accessToken,publicKey)){
+    const publicKey = jsrsasign.KEYUTIL.getKey(axiosResponse.data) as jsrsasign.RSAKey
+    if (!jsrsasign.KJUR.jws.JWS.verify(accessToken, publicKey)) {
       return false;
     }
     const tokenParts = accessToken.split('.');
 
-    const payload = JSON.parse(Buffer.from(tokenParts[1],'base64').toString());
+    const payload = JSON.parse(Buffer.from(tokenParts[1], 'base64').toString());
     const date = new Date();
-    if(payload.exp < Math.floor(date.getTime() / 1000)){
+    if (payload.exp < Math.floor(date.getTime() / 1000)) {
       return false;
     }
     return true
