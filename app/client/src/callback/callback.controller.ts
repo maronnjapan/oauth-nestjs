@@ -6,9 +6,9 @@ import { Config } from 'src/config/Config';
 export type TokenType = {
     access_token: string;
     token_type: 'Bearer';
-    refresh_token: string;
+    refresh_token?: string;
     scope: string;
-    id_token?: string;
+    id_token: string;
 }
 
 
@@ -46,7 +46,7 @@ export class CallbackController {
                 const getPublicKeyResponse: AxiosResponse = await axios.get('http://localhost:3001/token/public-key')
 
             }
-            return res.render('index', { access_token: data.access_token, scope: data.scope, refresh_token: data.refresh_token })
+            return res.render('index', { access_token: data.access_token, scope: data.scope, refresh_token: data.refresh_token, id_token: data.id_token })
         } catch (e) {
             if (axios.isAxiosError(e) && e.response) {
                 const error = e.response.data;

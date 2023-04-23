@@ -32,6 +32,7 @@ export class TokenService {
     }
 
     async createToken(clientAuthDto: ClientAuthDto, userData: User, clientId: string) {
+        const scope = clientAuthDto.scope.split(' ');
         const jti = Math.random().toString(36).slice(-10);
         const header = {
             typ: 'JWT',
@@ -45,7 +46,7 @@ export class TokenService {
             iat: Math.floor(Date.now() / 1000),
             exp: Math.floor(Date.now() / 1000) + (5 * 60),
             jti,
-            scope: clientAuthDto.scope.split(' ')
+            scope
         }
         await prismaServie.accessToken.create({
             data: {
@@ -55,27 +56,28 @@ export class TokenService {
         const pem = jsrsasignUtil.readFile(__dirname.replace(/dist[\S]*/g, '') + 'private-key.pem')
         const privateKey = jsrsasign.KEYUTIL.getKey(pem) as jsrsasign.RSAKey;
         const accessToken = jsrsasign.KJUR.jws.JWS.sign(header.alg, JSON.stringify(header), JSON.stringify(payload), privateKey)
-
-        const refreshToken = Math.random().toString(36).slice(-12);
-        await prismaServie.refreshToken.create({
-            data: {
-                client_id: clientId,
-                refresh_token: refreshToken,
-                scope: clientAuthDto.scope.split(' '),
-                user: {
-                    connect: { sub: userData.sub }
-                }
-            }
-        })
-
         const returnJson = {
             access_token: accessToken,
             token_type: 'Bearer',
-            refresh_token: refreshToken,
+            refresh_token: undefined,
+            id_token: undefined,
             scope: clientAuthDto.scope
         }
-
-        if (clientAuthDto.scope.split(' ').includes('openid') && clientAuthDto.user) {
+        if (scope.includes('offline_access')) {
+            const refreshToken = Math.random().toString(36).slice(-12);
+            await prismaServie.refreshToken.create({
+                data: {
+                    client_id: clientId,
+                    refresh_token: refreshToken,
+                    scope: clientAuthDto.scope.split(' '),
+                    user: {
+                        connect: { sub: userData.sub }
+                    }
+                }
+            })
+            returnJson.refresh_token = refreshToken;
+        }
+        if (scope.includes('openid')) {
             const iHeader = {
                 typ: 'JWT',
                 alg: 'RS256',
@@ -88,22 +90,14 @@ export class TokenService {
                 iat: Math.floor(Date.now() / 1000),
                 exp: Math.floor(Date.now() / 1000) + (5 * 60),
             }
-
             const idToken = jsrsasign.KJUR.jws.JWS.sign(
                 iHeader.alg,
                 JSON.stringify(iHeader),
                 JSON.stringify(iPayload),
                 privateKey
             )
-            return { ...returnJson, id_token: idToken }
-
+            returnJson.id_token = idToken
         }
-
-        return {
-            access_token: accessToken,
-            token_type: 'Bearer',
-            refresh_token: refreshToken,
-            scope: clientAuthDto.scope
-        }
+        return returnJson;
     }
 }

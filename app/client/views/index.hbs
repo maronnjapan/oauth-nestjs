@@ -38,16 +38,26 @@
           }}{{else}}NONE{{/if}}</span></p>
       <p>Scope value: <span class="label label-danger">{{#if scope}}{{ scope }}{{else}}NONE{{/if}}</span></p>
       <p>
-        Refresh token value: 
+        Refresh token value:
         <span class="label label-danger">
           {{#if refresh_token}}
-           {{ refresh_token}}
+          {{ refresh_token}}
           {{else}}
-           NONE
+          NONE
           {{/if}}
         </span>
       </p>
-      <a class="btn btn-default" href="/authorize">Get OAuth Token</a>
+      <p>
+        ID token value:
+        <span class="label label-danger">
+          {{#if id_token}}
+          {{ id_token}}
+          {{else}}
+          NONE
+          {{/if}}
+        </span>
+      </p>
+      <a class="btn btn-default" href="/authorize">Log in</a>
       <a class="btn btn-default" href="/fetch-resource">Show Some Resources</a>
 
     </div>

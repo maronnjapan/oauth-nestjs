@@ -30,17 +30,16 @@ export class TokenController {
             return res.status(401).json({ error: 'invalid_client' });
         }
 
+
         if (clientAuthDto.grant_type === 'authorization_code') {
             const authorizeData = await prismaServie.code.findFirst({ where: { code: clientAuthDto.code }, include: { user: true } })
             await prismaServie.code.delete({ where: { code: authorizeData.code } })
-
             if (!authorizeData) {
                 return res.status(400).json({ error: 'invalid_grant' })
             }
 
             if (authorizeData.client_id === clientId) {
                 const tokenResponse = await this.tokenService.createToken(clientAuthDto, authorizeData.user, authorizeData.client_id);
-
                 return res.status(200).json(tokenResponse);
             } else {
                 return res.status(400).json({ error: 'invalid_grant' });

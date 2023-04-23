@@ -1,8 +1,13 @@
 {
+  "prisma": {
+    "seed": "ts-node prisma/seed/seed.ts"
+  },
   "devDependencies": {
     "prisma": "^4.11.0"
   },
   "dependencies": {
-    "@prisma/client": "^4.11.0"
+    "@prisma/client": "^4.11.0",
+    "@types/node": "^18.15.13",
+    "ts-node": "^10.9.1"
   }
 }

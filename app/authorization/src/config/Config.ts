@@ -11,7 +11,7 @@ export const Config = {
                 client_id: process.env.CLIENT_ID,
                 client_secret: process.env.CLIENT_SECRET,
                 redirect_uris: ['http://localhost:3000/callback'],
-                scope: ['openid', 'profile', 'email', 'address', 'phone']
+                scope: ['openid', 'profile', 'email', 'address', 'phone', 'offline_access']
             }
         ]
     },

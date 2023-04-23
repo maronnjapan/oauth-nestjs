@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Authorize } from '@prisma/client';
+import { Authorize, User } from '@prisma/client';
 import prismaServie from '~/prisma';
 import { ApproveDto } from './dto/approve.dto';
 
@@ -25,7 +25,7 @@ export class AuthorizeService {
         return newUrl.toString();
     }
 
-    async getRedirectUrl(grantData: Authorize, postData: ApproveDto) {
+    async getRedirectUrl(grantData: Authorize, postData: ApproveDto, user: User) {
 
         if (postData.deny === 'Deny') {
             return this.buildUrl(grantData.redirect_uri, {
@@ -34,9 +34,10 @@ export class AuthorizeService {
 
         }
 
+
         if (grantData.response_type === 'code') {
 
-            const codeData = await this.registerAuthorizeCode(grantData.client_id, postData.userId)
+            const codeData = await this.registerAuthorizeCode(grantData.client_id, user.sub)
 
             return this.buildUrl(grantData.redirect_uri, {
                 code: codeData.code,

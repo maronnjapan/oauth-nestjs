@@ -3,22 +3,23 @@ import { URL } from 'url';
 
 
 type Options = {
-    response_type:'code'
-    client_id:string
-    redirect_uri:string
-    state:string
-    scope:string;
+    response_type: 'code'
+    client_id: string
+    redirect_uri: string
+    state: string
+    scope: string;
+    prompt?: 'consent';
 }
 @Injectable()
 export class AuthorizeService {
 
-    buildUrl(base:string,options:Options,hash?:string){
+    buildUrl(base: string, options: Options, hash?: string) {
         const newUrl = new URL(base);
 
-        const urlSearchParam =  new URLSearchParams(options).toString();
+        const urlSearchParam = new URLSearchParams(options).toString();
 
         newUrl.search = urlSearchParam;
-        if(hash){
+        if (hash) {
             newUrl.hash = hash;
         }
 

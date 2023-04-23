@@ -53,13 +53,12 @@ enum ResponseType {
 }
 
 model User {
-  sub                String         @id
-  preferred_username String
-  name               String
-  email              String
-  email_verified     Boolean
-  code               Code[]
-  RefreshToken       RefreshToken[]
+  sub          String         @id
+  name         String
+  email        String
+  password     String
+  code         Code[]
+  RefreshToken RefreshToken[]
 }
 
 model Words {

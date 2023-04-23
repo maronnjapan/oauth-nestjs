@@ -44,19 +44,19 @@
 			<p><b>URI:</b> <code>{{ client.redirect_uri }}</code></p>
 			{{/if }} --}}
 
-			<form class="form" action="/authorize" method="POST">
+			<form class="form" action="/authorize" method="POST" id="authorize_form">
 				<input type="hidden" name="reqid" value="{{ reqid }}">
-				<select name="userId">
-					{{#each user}}
-					<option value="{{ this/sub }}">{{ this/name }}</option>
-					{{/each }}
-				</select>
+				<input type="text" name="email" placeholder="メールアドレス" value="test1@example.com">
+				<input type="password" name="password" placeholder="パスワード" value="test1">
 				{{#if scope }}
 				<p>The client is requesting access to the following:</p>
 				<ul>
 					{{#each scope}}
-					<li><input type="checkbox" name="scope[]" id="scope_{{ this }}" checked="checked"
-							value="{{ this }}"> <label for="scope_{{ this }}">{{ this }}</label></li>
+					<li>
+						<input type="checkbox" name="scope[]" id="scope_{{ this }}" checked="checked"
+							value="{{ this }}">
+						<label for="scope_{{ this }}">{{ this }}</label>
+					</li>
 					{{/each }}
 				</ul>
 				{{/if }}
@@ -67,6 +67,19 @@
 
 	</div><!-- /.container -->
 
+	<script>
+		const offlineAccessScope = document.getElementById('scope_offline_access');
+		const approveSubmitForm = document.querySelector('form')
+		approveSubmitForm.addEventListener("submit", function (e) {
+			if (offlineAccessScope.checked) {
+				e.preventDefault();
+				if (confirm('リフレッシュトークンも付与しますがよろしいでしょうか？')) {
+					approveSubmitForm.submit()
+				}
+				return false;
+			}
+		});
+	</script>
 </body>
 
 </html>
