@@ -40,9 +40,9 @@ export class TokenService {
             kid: 'authServer'
         }
         const payload = {
-            iss: process.env.APP_DOMAIN + '/' + process.env.AUTHRIZATION_PORT,
+            iss: process.env.APP_DOMAIN + ':' + process.env.AUTHRIZATION_PORT,
             sub: userData.sub,
-            aud: process.env.APP_DOMAIN + '/' + process.env.RESOURCE_PORT,
+            aud: process.env.APP_DOMAIN + ':' + process.env.RESOURCE_PORT,
             iat: Math.floor(Date.now() / 1000),
             exp: Math.floor(Date.now() / 1000) + (5 * 60),
             jti,
@@ -84,9 +84,9 @@ export class TokenService {
                 kid: 'authServer'
             }
             const iPayload = {
-                iss: 'http://localhost:9001',
+                iss: process.env.APP_DOMAIN + ':' + process.env.AUTHRIZATION_PORT,
                 sub: userData.sub,
-                aud: clientAuthDto.client_id,
+                aud: [clientId],
                 iat: Math.floor(Date.now() / 1000),
                 exp: Math.floor(Date.now() / 1000) + (5 * 60),
             }

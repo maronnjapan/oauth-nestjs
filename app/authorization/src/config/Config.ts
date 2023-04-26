@@ -10,9 +10,9 @@ export const Config = {
             {
                 client_id: process.env.CLIENT_ID,
                 client_secret: process.env.CLIENT_SECRET,
-                redirect_uris: ['http://localhost:3000/callback'],
+                redirect_uris: ['http://localhost:3000/callback', 'http://localhost:3003/callback'],
                 scope: ['openid', 'profile', 'email', 'address', 'phone', 'offline_access']
-            }
+            },
         ]
     },
 

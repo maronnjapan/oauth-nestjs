@@ -12,6 +12,7 @@ services:
       - "3001:3001"
       # リソースサーバー用のport
       - "3002:3002"
+      - "3003:3003"
       # Prisma Studio用のport
       - "5555:5555"
     volumes:

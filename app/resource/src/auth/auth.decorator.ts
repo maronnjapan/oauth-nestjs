@@ -2,6 +2,7 @@ import { createParamDecorator, ExecutionContext, SetMetadata } from '@nestjs/com
 import { Request } from 'express';
 
 export type AuthContext = {
+    userId: string;
     scope: string[];
 };
 export const AuthContext = createParamDecorator(
@@ -11,6 +12,6 @@ export const AuthContext = createParamDecorator(
         const accessToken = authHeader.slice('bearer '.length);
         const tokenParts = accessToken.split('.');
         const payload = JSON.parse(Buffer.from(tokenParts[1], 'base64').toString());
-        return { scope: payload.scope }
+        return { userId: payload.sub, scope: payload.scope }
     }
 )

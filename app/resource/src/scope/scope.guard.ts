@@ -3,13 +3,13 @@ import { Request } from 'express';
 import { Observable } from 'rxjs';
 
 
-type Scope = {
-  scopeName: 'read' | 'write' | 'delete' | 'openid'
-}
+// type Scope = {
+//   scopeName: 'read' | 'write' | 'delete' | 'openid'
+// }
 
 @Injectable()
 export class ScopeGuard implements CanActivate {
-  constructor(private scope: Scope[]) { }
+  constructor(private scope: string) { }
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
@@ -18,6 +18,7 @@ export class ScopeGuard implements CanActivate {
     const accessToken = authHeader.slice('bearer '.length);
     const tokenParts = accessToken.split('.')
     const payload = JSON.parse(Buffer.from(tokenParts[1], 'base64').toString());
-    return this.scope.filter((s) => payload.scope.includes(s.scopeName)).length === this.scope.length ? true : false;
+    return payload.scope.some((val) => val === this.scope);
+    // return this.scope.filter((s) => payload.scope.includes(s.scopeName)).length === this.scope.length ? true : false;
   }
 }

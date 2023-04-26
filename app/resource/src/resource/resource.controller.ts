@@ -14,21 +14,21 @@ export class ResourceController {
 
 
         @Get('read')
-        @UseGuards(new ScopeGuard([{ scopeName: 'read' }]))
+        // @UseGuards(new ScopeGuard([{ scopeName: 'read' }]))
         async getWords(@Res() res: Response) {
                 const words = await prismaServie.words.findMany();
                 return res.json({ words: words.map((word) => word.val) });
         }
 
         @Post()
-        @UseGuards(new ScopeGuard([{ scopeName: 'write' }]))
+        // @UseGuards(new ScopeGuard([{ scopeName: 'write' }]))
         async addWord(@Body() wordDto: { addWord: string }, @Res() res: Response) {
                 await prismaServie.words.create({ data: { val: wordDto.addWord } });
                 return res.status(201).json({});
         }
 
         @Delete()
-        @UseGuards(new ScopeGuard([{ scopeName: 'write' }, { scopeName: 'delete' }]))
+        // @UseGuards(new ScopeGuard([{ scopeName: 'write' }, { scopeName: 'delete' }]))
         async deleteWord(@Res() res: Response) {
                 const word = await prismaServie.words.findFirst();
                 await prismaServie.words.delete({ where: { id: word.id } })

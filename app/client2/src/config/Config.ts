@@ -2,7 +2,7 @@
 
 export const Config = {
     getRedirectUris(): string[] {
-        return ['http://localhost:3000/callback']
+        return ['http://localhost:3003/callback']
     },
     getAuthorizationServerEndpoint(): string {
         return 'http://localhost:3001'

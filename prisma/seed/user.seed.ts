@@ -7,13 +7,17 @@ async function userSeed(prisma: PrismaClient) {
                 sub: 'user-sub-1',
                 email: 'test1@example.com',
                 password: 'test1',
-                name: 'Bob'
+                name: 'Bob',
+                address: 'test_address1',
+                phone_number: '000-0000-000',
             },
             {
                 sub: 'user-sub-2',
                 email: 'test2@example.com',
                 password: 'test2',
                 name: 'Alice',
+                address: 'test_address2',
+                phone_number: '000-0000-000',
             }
         ]
     })
