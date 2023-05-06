@@ -28,27 +28,18 @@ export class AuthorizeController {
         if (!scopeList.length || scopeList.length !== filterScope.length) {
             return res.render('error', { error: 'Invalid Scope' })
         }
-
         const userId = req.cookies['user_id'];
         console.log(userId)
-
-
         if (scopeList.includes('offline_access') && prompt !== 'consent') {
             filterScope = scopeList.filter((scope) => scope !== 'offline_access');
         }
-
-
         if (userId) {
             const user = await prismaServie.user.findFirst({ where: { sub: userId } });
             if (user) {
-                const redirectUrl = await this.authorizeService.getRedirectUrl({ client_id: client.client_id, redirect_uri: redirectUri, state, response_type: responseType, id: 0, reqId: '' }, { email: '', password: '', reqid: '', scope: scopeList, approve: 'Approve' }, user);
+                const redirectUrl = await this.authorizeService.getRedirectUrl(responseType, client.client_id, redirectUri, state, filterScope, user);
                 return res.redirect(redirectUrl)
             }
-
         }
-
-
-
         const reqId = Math.random().toString(36).slice(-10);
         await prismaServie.authorize.create({
             data: {
@@ -85,7 +76,7 @@ export class AuthorizeController {
             return res.render('error', { error: 'No Match User' });
         }
 
-        const redirectUrl = await this.authorizeService.getRedirectUrl(query, approveDto, user)
+        const redirectUrl = await this.authorizeService.getRedirectUrl(query.response_type, client.client_id, query.redirect_uri, query.state, approveDto.scope, user, approveDto.deny)
         res.cookie('user_id', user.sub)
         return res.redirect(redirectUrl);
     }

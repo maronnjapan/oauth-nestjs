@@ -14,14 +14,6 @@ declare module 'express-session' {
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-
-  app.use(
-    session({
-      secret: 'my-secret2',
-      resave: false,
-      saveUninitialized: false,
-    }),
-  );
   app.use(cookieParser());
   const path = __dirname.replace(/dist[\s\S]*/g, 'dist')
   app.useStaticAssets(join(path, '..', 'public'));

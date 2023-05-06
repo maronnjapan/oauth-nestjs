@@ -25,28 +25,28 @@ export class AuthorizeService {
         return newUrl.toString();
     }
 
-    async getRedirectUrl(grantData: Authorize, postData: ApproveDto, user: User) {
+    async getRedirectUrl(responseType: string, clientId: string, redirectUrl: string, state: string, scope: string[], user: User, deny?: string) {
 
-        if (postData.deny === 'Deny') {
-            return this.buildUrl(grantData.redirect_uri, {
+        if (deny) {
+            return this.buildUrl(redirectUrl, {
                 error: 'access_denied'
             })
 
         }
 
 
-        if (grantData.response_type === 'code') {
+        if (responseType === 'code') {
 
-            const codeData = await this.registerAuthorizeCode(grantData.client_id, user.sub)
+            const codeData = await this.registerAuthorizeCode(clientId, user.sub)
 
-            return this.buildUrl(grantData.redirect_uri, {
+            return this.buildUrl(redirectUrl, {
                 code: codeData.code,
-                state: grantData.state,
-                scope: postData.scope.join(' ')
+                state: state,
+                scope: scope.join(' ')
             })
         }
 
-        return this.buildUrl(grantData.redirect_uri, {
+        return this.buildUrl(redirectUrl, {
             error: 'unsupported_response_type'
         })
 

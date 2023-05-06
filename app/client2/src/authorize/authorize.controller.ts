@@ -13,7 +13,7 @@ export class AuthorizeController {
         req.session.state = state
         const authorizeUrl = this.authorizeService.buildUrl(Config.getAuthorizationEndpoint(), {
             response_type: 'code',
-            client_id: process.env.CLIENT_ID,
+            client_id: process.env.CLIENT2_ID,
             redirect_uri: Config.getRedirectUris()[0],
             state,
             scope: 'openid profile email address phone offline_access',

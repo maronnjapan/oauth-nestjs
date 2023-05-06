@@ -21,6 +21,6 @@ export const Config = {
     },
 
     getEncodeClientCredentials() {
-        return Buffer.from(process.env.CLIENT_ID + ':' + process.env.CLIENT_SECRET).toString('base64');
+        return Buffer.from(process.env.CLIENT2_ID + ':' + process.env.CLIENT2_SECRET).toString('base64');
     }
 }
