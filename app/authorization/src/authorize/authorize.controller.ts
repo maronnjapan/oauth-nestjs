@@ -4,6 +4,7 @@ import { Config } from 'src/config/Config';
 import { AuthorizeService } from './authorize.service';
 import prismaServie from '~/prisma';
 import { ApproveDto } from './dto/approve.dto';
+import { CodeChallengeMethod } from '@prisma/client';
 
 type ResponseType = 'code';
 @Controller('authorize')
@@ -12,7 +13,7 @@ export class AuthorizeController {
     constructor(private authorizeService: AuthorizeService) { }
 
     @Get()
-    async showApprove(@Query('client_id') clientId: string, @Query('redirect_uri') redirectUri: string, @Query('response_type') responseType: ResponseType, @Query('state') state: string, @Query('scope') scope: string, @Query('prompt') prompt: string, @Req() req: Request, @Res() res: Response) {
+    async showApprove(@Query('client_id') clientId: string, @Query('redirect_uri') redirectUri: string, @Query('response_type') responseType: ResponseType, @Query('state') state: string, @Query('scope') scope: string, @Query('prompt') prompt: string, @Query('code_challenge') codeChallenge: string, @Query('code_challenge_method') codeChallengeMethod: 's256' | 'plain', @Req() req: Request, @Res() res: Response) {
         const client = Config.getClients().find((data) => data.client_id === clientId)
         if (!client) {
             return res.render('error', { error: 'Unknown Client' })
@@ -29,14 +30,15 @@ export class AuthorizeController {
             return res.render('error', { error: 'Invalid Scope' })
         }
         const userId = req.cookies['user_id'];
-        console.log(userId)
         if (scopeList.includes('offline_access') && prompt !== 'consent') {
             filterScope = scopeList.filter((scope) => scope !== 'offline_access');
         }
+
+        await prismaServie.codeChallenge.create({ data: { code_challenge: codeChallenge, code_challenge_method: codeChallengeMethod } })
         if (userId) {
             const user = await prismaServie.user.findFirst({ where: { sub: userId } });
             if (user) {
-                const redirectUrl = await this.authorizeService.getRedirectUrl(responseType, client.client_id, redirectUri, state, filterScope, user);
+                const redirectUrl = await this.authorizeService.getRedirectUrl(responseType, client.client_id, redirectUri, state, filterScope, codeChallenge, user);
                 return res.redirect(redirectUrl)
             }
         }
@@ -50,7 +52,7 @@ export class AuthorizeController {
                 state,
             }
         })
-        return res.render('approve', { client: client, reqid: reqId, scope: scopeList })
+        return res.render('approve', { client: client, reqid: reqId, scope: scopeList, codeChallenge })
     }
 
     @Post()
@@ -76,7 +78,9 @@ export class AuthorizeController {
             return res.render('error', { error: 'No Match User' });
         }
 
-        const redirectUrl = await this.authorizeService.getRedirectUrl(query.response_type, client.client_id, query.redirect_uri, query.state, approveDto.scope, user, approveDto.deny)
+        const codeChallengeData = await prismaServie.codeChallenge.findUnique({ where: { code_challenge: approveDto.codeChallenge } })
+
+        const redirectUrl = await this.authorizeService.getRedirectUrl(query.response_type, client.client_id, query.redirect_uri, query.state, approveDto.scope, approveDto.codeChallenge, user, approveDto.deny)
         res.cookie('user_id', user.sub)
         return res.redirect(redirectUrl);
     }

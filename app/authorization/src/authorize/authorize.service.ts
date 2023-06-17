@@ -25,7 +25,7 @@ export class AuthorizeService {
         return newUrl.toString();
     }
 
-    async getRedirectUrl(responseType: string, clientId: string, redirectUrl: string, state: string, scope: string[], user: User, deny?: string) {
+    async getRedirectUrl(responseType: string, clientId: string, redirectUrl: string, state: string, scope: string[], codeChallenge: string, user: User, deny?: string) {
 
         if (deny) {
             return this.buildUrl(redirectUrl, {
@@ -37,7 +37,7 @@ export class AuthorizeService {
 
         if (responseType === 'code') {
 
-            const codeData = await this.registerAuthorizeCode(clientId, user.sub)
+            const codeData = await this.registerAuthorizeCode(clientId, user.sub, codeChallenge)
 
             return this.buildUrl(redirectUrl, {
                 code: codeData.code,
@@ -52,7 +52,7 @@ export class AuthorizeService {
 
     }
 
-    async registerAuthorizeCode(clientId: string, userId: string) {
+    async registerAuthorizeCode(clientId: string, userId: string, codeChallenge: string) {
         const code = Math.random().toString(36).slice(-10);
         return await prismaServie.code.create({
             data: {
@@ -60,9 +60,11 @@ export class AuthorizeService {
                 client_id: clientId,
                 user: {
                     connect: { sub: userId }
+                },
+                code_challenge: {
+                    connect: { code_challenge: codeChallenge }
                 }
             }
         })
-
     }
 }

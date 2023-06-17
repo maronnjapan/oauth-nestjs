@@ -8,6 +8,7 @@
   "dependencies": {
     "@prisma/client": "^4.11.0",
     "@types/node": "^18.15.13",
+    "auth0": "^3.4.0",
     "ts-node": "^10.9.1"
   }
 }

@@ -1,5 +1,6 @@
 import { createParamDecorator, ExecutionContext, SetMetadata } from '@nestjs/common';
 import { Request } from 'express';
+import { Payload } from './jwt.strategy';
 
 export type AuthContext = {
     userId: string;
@@ -11,7 +12,7 @@ export const AuthContext = createParamDecorator(
         const authHeader = request.headers.authorization;
         const accessToken = authHeader.slice('bearer '.length);
         const tokenParts = accessToken.split('.');
-        const payload = JSON.parse(Buffer.from(tokenParts[1], 'base64').toString());
+        const payload: Payload = JSON.parse(Buffer.from(tokenParts[1], 'base64').toString());
         return { userId: payload.sub, scope: payload.scope }
     }
 )

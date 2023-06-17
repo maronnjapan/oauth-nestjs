@@ -14,6 +14,7 @@ export type UserInfo = {
 declare module 'express-session' {
   interface SessionData {
     state: string;
+    code_verifier: string;
     access_token: string;
     refresh_token: string;
     user_info: UserInfo;

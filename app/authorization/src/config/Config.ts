@@ -22,6 +22,15 @@ export const Config = {
         ]
     },
 
+    getResourceServers() {
+        return [
+            {
+                client_id: process.env.RESOURCE_ID,
+                client_secret: process.env.RESOURCE_SECRET,
+                scope: ['']
+            },
+        ]
+    },
     decodeClientCredentials(auth: string) {
         const clientCredentials = Buffer.from(auth.slice('basic '.length), 'base64').toString().split(':');
         return { id: clientCredentials[0], secret: clientCredentials[1] };

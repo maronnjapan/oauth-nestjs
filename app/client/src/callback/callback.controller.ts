@@ -27,8 +27,9 @@ export class CallbackController {
 
         const sessionState = req.session.state
         req.session.state = null
+        const codeVerifier = req.session.code_verifier;
+        req.session.code_verifier = null
 
-        console.log(sessionState)
         if (!state || sessionState !== state) {
             return res.render('error', { error: 'invalid_callback' })
         }
@@ -37,6 +38,7 @@ export class CallbackController {
             code: code,
             redirect_uri: Config.getRedirectUris()[0],
             scope,
+            code_verifier: codeVerifier
         }
 
         const headers = {

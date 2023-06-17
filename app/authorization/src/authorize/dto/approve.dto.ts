@@ -5,4 +5,5 @@ export class ApproveDto {
     deny?: 'Deny';
     email: string;
     password: string;
+    codeChallenge: string;
 }

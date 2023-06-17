@@ -28,7 +28,6 @@ export class CallbackController {
         const sessionState = req.session.state
         req.session.state = null
 
-        console.log(sessionState)
         if (!state || sessionState !== state) {
             return res.render('error', { error: 'invalid_callback' })
         }

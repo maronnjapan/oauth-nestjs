@@ -31,7 +31,29 @@ export class TokenService {
         return { clientId: undefined, clientSecret: undefined }
     }
 
-    async createToken(clientAuthDto: ClientAuthDto, userData: User, clientId: string) {
+    getResourceInfo(authHeader: string, scope: string) {
+        const clientCredentials = Config.decodeClientCredentials(authHeader);
+        const allowedResource = Config.getResourceServers().find((serve) => serve.client_id === clientCredentials.id)
+        if (!allowedResource) {
+            return { clientId: undefined, clientSecret: undefined }
+        }
+        const scopeList = scope.split(' ')
+        const filterScope = scopeList.filter((data) => allowedResource.scope.includes(data));
+        if (scopeList.length !== filterScope.length) {
+            return { clientId: undefined, clientSecret: undefined }
+        }
+
+        if (allowedResource.client_secret !== clientCredentials.secret) {
+            return { clientId: undefined, clientSecret: undefined }
+
+        }
+        const clientId = clientCredentials.id;
+        const clientSecret = clientCredentials.secret;
+        return { clientId, clientSecret }
+
+    }
+
+    async createToken(clientAuthDto: ClientAuthDto, clientId: string, userData?: User) {
         const scope = clientAuthDto.scope.split(' ');
         const jti = Math.random().toString(36).slice(-10);
         const header = {
@@ -41,7 +63,7 @@ export class TokenService {
         }
         const payload = {
             iss: process.env.APP_DOMAIN + ':' + process.env.AUTHRIZATION_PORT,
-            sub: userData.sub,
+            sub: userData ? userData.sub : '',
             aud: process.env.APP_DOMAIN + ':' + process.env.RESOURCE_PORT,
             iat: Math.floor(Date.now() / 1000),
             exp: Math.floor(Date.now() / 1000) + (5 * 60),
@@ -85,7 +107,7 @@ export class TokenService {
             }
             const iPayload = {
                 iss: process.env.APP_DOMAIN + ':' + process.env.AUTHRIZATION_PORT,
-                sub: userData.sub,
+                sub: userData ? userData.sub : '',
                 aud: [clientId],
                 iat: Math.floor(Date.now() / 1000),
                 exp: Math.floor(Date.now() / 1000) + (5 * 60),

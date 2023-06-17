@@ -46,6 +46,7 @@
 
 			<form class="form" action="/authorize" method="POST" id="authorize_form">
 				<input type="hidden" name="reqid" value="{{ reqid }}">
+				<input type="hidden" name="codeChallenge" value="{{ codeChallenge }}">
 				<input type="text" name="email" placeholder="メールアドレス" value="test1@example.com">
 				<input type="password" name="password" placeholder="パスワード" value="test1">
 				{{#if scope }}

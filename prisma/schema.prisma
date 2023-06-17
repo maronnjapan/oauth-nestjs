@@ -24,7 +24,9 @@ model Code {
   client_id String
   code      String @unique
   userId    String
+  code_challenge_id String @unique
   user      User   @relation(fields: [userId], references: [sub])
+  code_challenge CodeChallenge @relation(fields: [code_challenge_id], references: [code_challenge], onDelete: Cascade)
 }
 
 model AccessToken {
@@ -66,4 +68,15 @@ model User {
 model Words {
   id  Int    @id @default(autoincrement())
   val String
+}
+
+model CodeChallenge {
+  code_challenge String @unique
+  code_challenge_method CodeChallengeMethod
+  code Code?
+}
+
+enum CodeChallengeMethod {
+  s256
+  plain
 }
