@@ -15,6 +15,7 @@ services:
       - "3003:3003"
       # Prisma Studio用のport
       - "5555:5555"
+      - "5556:5556"
     volumes:
       - type: bind
         source: .
@@ -32,3 +33,13 @@ services:
       - .env
     volumes:
       - ./db:/var/lib/postgresql/data
+  
+  db_authorization:
+    image: postgres
+    container_name: my_postgres_authorization
+    ports:
+     - "5433:5433"
+    env_file:
+      - .env
+    volumes:
+      - ./db_authorization:/var/lib/postgresql/data

@@ -7,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_AUTHORIZATION")
 }
 
 model Authorize {
@@ -63,11 +63,6 @@ model User {
   phone_number String
   code         Code[]
   RefreshToken RefreshToken[]
-}
-
-model Words {
-  id  Int    @id @default(autoincrement())
-  val String
 }
 
 model CodeChallenge {
